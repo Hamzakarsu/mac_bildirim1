@@ -47,7 +47,8 @@ prev = load()
 try:
     lines = fetch_lines()
 except Exception as ex:
-    if not prev.get("error"):
+    print("HATA:", ex)
+    if not prev.get("error") or os.environ.get("EVENT") == "workflow_dispatch":
         tg(f"⚠️ Site okunamadi: {ex}")
     prev["error"] = True
     save(prev)
