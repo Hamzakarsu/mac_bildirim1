@@ -9,8 +9,11 @@ END = "regelung spiele ohne"
 EMPTY = "momentan sind keine spiele"
 
 def tg(msg):
-    requests.post(f"https://api.telegram.org/bot{TOKEN}/sendMessage",
-                  data={"chat_id": CHAT, "text": msg}, timeout=30)
+    r = requests.post(f"https://api.telegram.org/bot{TOKEN}/sendMessage",
+                      data={"chat_id": CHAT, "text": msg}, timeout=30)
+    print("Telegram cevabi:", r.status_code, r.text)
+    if not r.ok:
+        raise SystemExit("Telegram hata verdi: " + r.text)
 
 def load():
     try:
@@ -55,4 +58,5 @@ if new:
     tg("⚽ Yeni maç var!\n" + "\n".join(new[:15]) + "\n" + URL)
 if os.environ.get("EVENT") == "workflow_dispatch":
     tg(f"✅ Sistem çalışıyor. Sayfada şu an {len(lines)} satır maç bilgisi var.")
+print("bitti. satir sayisi:", len(lines), "olay:", os.environ.get("EVENT"))
 save({"lines": lines, "error": False})
